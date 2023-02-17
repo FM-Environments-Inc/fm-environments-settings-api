@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fm-environments-settings-api-deployment
+  labels:
+    app: fm-environments-settings-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fm-environments-settings-api
+  template:
+    metadata:
+      labels:
+        app: fm-environments-settings-api
+    spec:
+      containers:
+      - name: fm-environments-settings-api
+        image: kuzyacat/fm-environments-settings-api
+        ports:
+        - containerPort: 3004
+        env:
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postres-secret
+              key: postgres-password 
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: postgres-url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fm-environments-settings-service
+spec:
+  type: NodePort
+  selector:
+    app: fm-environments-settings
+  ports:
+    - protocol: TCP
+      port: 3004
+      targetPort: 3004
+      nodePort: 30104
