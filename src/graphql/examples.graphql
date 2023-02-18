@@ -1,0 +1,17 @@
+mutation createEnvironment($name: String!) {
+  createEnvironment(createEnvironmentData: { name: $name }) {
+    name
+  }
+}
+
+query environment($name: String!) {
+  environment(name: $name) {
+    name
+  }
+}
+
+query environments {
+  environments {
+    name
+  }
+}
